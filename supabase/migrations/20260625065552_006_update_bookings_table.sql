@@ -1,0 +1,6 @@
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS tattoo_design TEXT;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS booking_date DATE;
+ALTER TABLE bookings ADD COLUMN IF NOT EXISTS booking_time TEXT;
+ALTER TABLE bookings ALTER COLUMN user_id DROP NOT NULL;
+ALTER TABLE bookings ALTER COLUMN flash_design_id DROP NOT NULL;
+ALTER TABLE bookings ALTER COLUMN booking_slot_id DROP NOT NULL;
