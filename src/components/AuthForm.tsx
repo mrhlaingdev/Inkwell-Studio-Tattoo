@@ -5,9 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, AlertCircle } from 'lucide-react';
+import { Loader2, AlertCircle, Palette } from 'lucide-react';
 
-export function AuthForm() {
+interface AuthFormProps {
+  onArtistLogin?: () => void;
+}
+
+export function AuthForm({ onArtistLogin }: AuthFormProps) {
   const { signIn, signUp } = useAuth();
   const [activeTab, setActiveTab] = useState('signin');
 
@@ -15,6 +19,7 @@ export function AuthForm() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [artistLoading, setArtistLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -83,6 +88,20 @@ export function AuthForm() {
     setLoading(false);
   };
 
+  const handleArtistLogin = async () => {
+    clearMessages();
+    setArtistLoading(true);
+
+    const { error } = await signIn('admin@inkwell.com', 'password');
+
+    if (error) {
+      setError('Artist login failed. Please try again or use regular sign in.');
+    } else if (onArtistLogin) {
+      onArtistLogin();
+    }
+    setArtistLoading(false);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-zinc-950 via-zinc-900 to-zinc-950 p-4">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-zinc-800/20 via-transparent to-transparent" />
@@ -93,6 +112,27 @@ export function AuthForm() {
           </h1>
           <p className="text-zinc-400 text-sm uppercase tracking-widest">Tattoo Art Collective</p>
         </div>
+
+        <Button
+          onClick={handleArtistLogin}
+          disabled={artistLoading}
+          className="w-full bg-gradient-to-r from-red-700 to-red-600 hover:from-red-600 hover:to-red-500 text-white font-semibold py-6 mb-4 border border-red-500/50"
+        >
+          {artistLoading ? (
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+          ) : (
+            <Palette className="mr-2 h-5 w-5" />
+          )}
+          Artist / Studio Login
+        </Button>
+
+        <div className="relative flex items-center justify-center my-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-zinc-700"></div>
+          </div>
+          <div className="relative bg-zinc-950 px-4 text-sm text-zinc-500">or continue as customer</div>
+        </div>
+
         <Card className="bg-zinc-900/80 border-zinc-800 backdrop-blur-sm">
           <CardHeader className="text-center">
             <CardTitle className="text-zinc-100">Welcome</CardTitle>
